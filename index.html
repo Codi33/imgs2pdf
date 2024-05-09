@@ -48,18 +48,6 @@
             }
         }
 
-        function getImageSize(i) {
-            let img = new Image();
-            let objUrl = window.URL.createObjectURL(i);
-            console.log(objUrl);
-            img.onload = function() {
-                console.log(this.width, this.height);
-            }
-            img.src = objUrl;
-            img.className = "uploadedImage";
-            document.getElementsByTagName('body')[0].append(img);
-        }
-
         function convertToPDF() {
             if (!images.length) {
                 alert("Upload some images first");
@@ -69,8 +57,10 @@
             const compression = $("#compression").find(":selected").text();
 
             const firstImage = images[0];
+            let orientation = firstImage.width > firstImage.height ? "l" : "p";
+
             const doc = new jspdf.jsPDF({
-                orientation: "l",
+                orientation: orientation,
                 unit: "px",
                 format: [firstImage.width, firstImage.height]
             })
@@ -78,7 +68,8 @@
 
             for (i = 1; i < images.length; i++) { // skip first image
                 img = images[i];
-                doc.addPage([img.width, img.height]);
+                orientation = img.width > img.height ? "l" : "p";
+                doc.addPage([img.width, img.height], orientation);
                 doc.addImage(img, 'JPG', 0, 0, img.width, img.height, null, compression);
             }
 

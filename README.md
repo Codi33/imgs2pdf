@@ -8,7 +8,7 @@ You can access the live demo of this site [here](https://codi33.github.io/imgs2p
 
 ## Todo
 - [ ] Better UI with straightforward user experience in mind
-WIP...
+- [ ] Refactor code
 
 ## Bug reporting and contributing
 If you have any problem feel free to open issue or pull request
