@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="dist/jspdf.js"></script>
+    <script src="dist/jquery.js"></script>
+    <title>Convert images to PDF document</title>
+</head>
+<body>
+    <style>
+        .main_box {
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+            width: max-content;
+        }
+
+        .main_box_content {
+            display: flex;
+            gap: 5px;
+            flex-direction: column;
+        }
+    </style>
+    <script>
+        let images = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            $("#uploadInput").val(""); // reset on page reload
+        })
+
+        function resetUploads() {
+            $("#uploadInput").val("");
+            $(".uploadedImage").remove();
+            images = [];
+        }
+
+        function onNewUpload(e) {
+            $(".uploadedImage").remove();
+            const files = e.files;
+            for (i = 0; i < files.length; i++) {
+                let img = new Image();
+                let objUrl = window.URL.createObjectURL(files[i]);
+                img.src = objUrl;
+                img.className = "uploadedImage";
+                images.push(img);
+                $('body').append(img);
+            }
+        }
+
+        function getImageSize(i) {
+            let img = new Image();
+            let objUrl = window.URL.createObjectURL(i);
+            console.log(objUrl);
+            img.onload = function() {
+                console.log(this.width, this.height);
+            }
+            img.src = objUrl;
+            img.className = "uploadedImage";
+            document.getElementsByTagName('body')[0].append(img);
+        }
+
+        function convertToPDF() {
+            if (!images.length) {
+                alert("Upload some images first");
+                return;
+            }
+
+            const compression = $("#compression").find(":selected").text();
+
+            const firstImage = images[0];
+            const doc = new jspdf.jsPDF({
+                orientation: "l",
+                unit: "px",
+                format: [firstImage.width, firstImage.height]
+            })
+            doc.addImage(firstImage, 'JPG', 0, 0, firstImage.width, firstImage.height, null, compression);
+
+            for (i = 1; i < images.length; i++) { // skip first image
+                img = images[i];
+                doc.addPage([img.width, img.height]);
+                doc.addImage(img, 'JPG', 0, 0, img.width, img.height, null, compression);
+            }
+
+            const filename = Date.now().toString() + '.pdf';
+            doc.save(filename);
+        }
+    </script>
+
+    <fieldset class="main_box">
+        <label for="uploadInput">Drag or select one or multiple files</label>
+        <div class="main_box_content">
+            <input name[]="photos" accept="image/*" id="uploadInput" type="file" multiple onchange="onNewUpload(this)">
+            <label for="compression">Select compression</label>
+            <select name="compression" id="compression">
+                <option value="NONE" selected>NONE</option>
+                <option value="FAST">FAST</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="SLOW">SLOW</option>
+            </select>
+            <button onclick="convertToPDF()">Convert</button>
+            <button id="reset-btn" onclick="resetUploads()">Reset</button>
+        </div>
+    </fieldset>
+</body>
+</html>
