@@ -5,78 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="dist/jspdf.js"></script>
     <script src="dist/jquery.js"></script>
+    <link href="styles.css" rel="stylesheet">
     <title>Convert images to PDF document</title>
 </head>
 <body>
-    <style>
-        .main_box {
-            display: flex;
-            gap: 8px;
-            flex-direction: column;
-            width: max-content;
-        }
-
-        .main_box_content {
-            display: flex;
-            gap: 5px;
-            flex-direction: column;
-        }
-    </style>
-    <script>
-        let images = [];
-
-        document.addEventListener("DOMContentLoaded", () => {
-            $("#uploadInput").val(""); // reset on page reload
-        })
-
-        function resetUploads() {
-            $("#uploadInput").val("");
-            $(".uploadedImage").remove();
-            images = [];
-        }
-
-        function onNewUpload(e) {
-            $(".uploadedImage").remove();
-            const files = e.files;
-            for (i = 0; i < files.length; i++) {
-                let img = new Image();
-                let objUrl = window.URL.createObjectURL(files[i]);
-                img.src = objUrl;
-                img.className = "uploadedImage";
-                images.push(img);
-                $('body').append(img);
-            }
-        }
-
-        function convertToPDF() {
-            if (!images.length) {
-                alert("Upload some images first");
-                return;
-            }
-
-            const compression = $("#compression").find(":selected").text();
-
-            const firstImage = images[0];
-            let orientation = firstImage.width > firstImage.height ? "l" : "p";
-
-            const doc = new jspdf.jsPDF({
-                orientation: orientation,
-                unit: "px",
-                format: [firstImage.width, firstImage.height]
-            })
-            doc.addImage(firstImage, 'JPG', 0, 0, firstImage.width, firstImage.height, null, compression);
-
-            for (i = 1; i < images.length; i++) { // skip first image
-                img = images[i];
-                orientation = img.width > img.height ? "l" : "p";
-                doc.addPage([img.width, img.height], orientation);
-                doc.addImage(img, 'JPG', 0, 0, img.width, img.height, null, compression);
-            }
-
-            const filename = Date.now().toString() + '.pdf';
-            doc.save(filename);
-        }
-    </script>
+    <script src="script.js"></script>
 
     <fieldset class="main_box">
         <label for="uploadInput">Drag or select one or multiple files</label>

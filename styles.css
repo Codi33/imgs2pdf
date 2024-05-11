@@ -1,0 +1,12 @@
+.main_box {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    width: max-content;
+}
+
+.main_box_content {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+}
