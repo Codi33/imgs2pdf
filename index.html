@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="dist/jspdf.js"></script>
-    <script src="dist/jquery.js"></script>
     <link href="styles.css" rel="stylesheet">
     <title>Convert images to PDF document</title>
 </head>
 <body>
-    <script src="script.js"></script>
-
     <fieldset class="main_box">
         <label for="uploadInput">Drag or select one or multiple files</label>
         <div class="main_box_content">
@@ -26,5 +22,9 @@
             <button id="reset-btn" onclick="resetUploads()">Reset</button>
         </div>
     </fieldset>
+
+    <script src="dist/jspdf.js"></script>
+    <script src="dist/jquery.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

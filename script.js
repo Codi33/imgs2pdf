@@ -1,53 +1,57 @@
 let images = [];
 
-        document.addEventListener("DOMContentLoaded", () => {
-            $("#uploadInput").val(""); // reset on page reload
-        })
+document.addEventListener("DOMContentLoaded", () => {
+    resetUploads();
+})
 
-        function resetUploads() {
-            $("#uploadInput").val("");
-            $(".uploadedImage").remove();
-            images = [];
-        }
+function resetUploads() {
+    $("#uploadInput").val("");
+    $(".uploadedImage").remove();
+    images = [];
+}
 
-        function onNewUpload(e) {
-            $(".uploadedImage").remove();
-            const files = e.files;
-            for (i = 0; i < files.length; i++) {
-                let img = new Image();
-                let objUrl = window.URL.createObjectURL(files[i]);
-                img.src = objUrl;
-                img.className = "uploadedImage";
-                images.push(img);
-                $('body').append(img);
-            }
-        }
+function clearUploads() {
+    $(".uploadedImage").remove();
+    images = [];
+}
 
-        function convertToPDF() {
-            if (!images.length) {
-                alert("Upload some images first");
-                return;
-            }
+function onNewUpload(e) {
+    clearUploads();
+    const files = e.files;
+    for (i = 0; i < files.length; i++) {
+        let img = new Image();
+        let objUrl = window.URL.createObjectURL(files[i]);
+        img.src = objUrl;
+        img.className = "uploadedImage";
+        images.push(img);
+        $('body').append(img);
+    }
+}
 
-            const compression = $("#compression").find(":selected").text();
+function convertToPDF() {
+    if (!images.length) {
+        alert("Upload some images first");
+        return;
+    }
 
-            const firstImage = images[0];
-            let orientation = firstImage.width > firstImage.height ? "l" : "p";
+    const compression = $("#compression").find(":selected").text();
 
-            const doc = new jspdf.jsPDF({
-                orientation: orientation,
-                unit: "px",
-                format: [firstImage.width, firstImage.height]
-            })
-            doc.addImage(firstImage, 'JPG', 0, 0, firstImage.width, firstImage.height, null, compression);
+    const firstImage = images[0];
+    let orientation = firstImage.width > firstImage.height ? "l" : "p";
 
-            for (i = 1; i < images.length; i++) { // skip first image
-                img = images[i];
-                orientation = img.width > img.height ? "l" : "p";
-                doc.addPage([img.width, img.height], orientation);
-                doc.addImage(img, 'JPG', 0, 0, img.width, img.height, null, compression);
-            }
+    const doc = new jspdf.jsPDF({
+        orientation: orientation,
+        unit: "px",
+        format: [firstImage.width, firstImage.height]
+    })
+    doc.addImage(firstImage, 'JPG', 0, 0, firstImage.width, firstImage.height, null, compression);
 
-            const filename = Date.now().toString() + '.pdf';
-            doc.save(filename);
-        }
+    images.slice(1).forEach(img => { // skip first image
+        const orientation = img.width > img.height ? "l" : "p";
+        doc.addPage([img.width, img.height], orientation);
+        doc.addImage(img, 'JPG', 0, 0, img.width, img.height, null, compression);
+    })
+
+    const filename = Date.now().toString() + '.pdf';
+    doc.save(filename);
+}
